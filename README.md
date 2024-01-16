@@ -132,3 +132,13 @@ $ sudo dnf upgrade --refresh --repo dci -y
 - Create github token to be used for helmchart PR  
   `github_token_path: "/opt/cache/dcicertbot-token.txt"`  
   [how-to-create-github-token](https://github.com/redhatci/ansible-collection-redhatci-ocp/blob/main/roles/create_certification_project/README.md#github-token)
+- Create Pyxis Apikey    
+A token to access specific partner Pyxis catalog data using REST API. [Create Pyxis API Key](https://connect.redhat.com/account/api-keys) 
+- Kubeconfig   
+A kubeconfig that can access the OCP cluster 
+- Product-listing ID  
+Before a container or helm chart/operator can be publicly listed into RedHat catalog, a Product-Listing must be created, it only need to create once according to CNF type.
+Follow this link to [Create-Product-Listing](https://connect.redhat.com/manage/products)  
+- Organization ID  
+Mandatory when using create_container_project. Company ID will be used for the verification of container certification project Organization-ID Company-Profile.
+![Get Redhat OrgID](img/redhat-org-id.png) 
