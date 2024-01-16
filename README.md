@@ -16,6 +16,7 @@ universal-smf-ava   HasModifiedFiles          PASSED
 universal-smf-ava   BasedOnUbi                PASSED    
 Verdict: PASSED
 ```
+For details of sanity check script using preflight scan, it can be found [here](https://github.com/ansvu/quick_scan_container_images_online_offline)
 
 <details>
 <summary>Preflight All Test Cases</summary>
@@ -120,7 +121,7 @@ For more details of `chart-verifier` test cases, please click [chart-verifier-te
 - Set up a jumphost with internet access, install the dci-openshift-appagent, detailed guide can be found in this link [dci-openshift-app-agent-install](https://doc.distributed-ci.io/dci-openshift-app-agent/)
 - Install dci-pipeline  
   [DCI-PIPELINE](https://github.com/redhat-cip/dci-pipeline) 
-- It is recommended consistently check latest version of the DCI app agent package, and upgrade to latest version if it not before to use.
+- It is recommended consistently check latest version of the DCI app agent package, and upgrade to latest version before using.
 ```bash
 $ sudo dnf upgrade --refresh --repo dci -y
 ```
@@ -141,4 +142,149 @@ Before a container or helm chart/operator can be publicly listed into RedHat cat
 Follow this link to [Create-Product-Listing](https://connect.redhat.com/manage/products)  
 - Organization ID  
 Mandatory when using create_container_project. Company ID will be used for the verification of container certification project Organization-ID Company-Profile.
-![Get Redhat OrgID](img/redhat-org-id.png) 
+![Get Redhat OrgID](img/redhat-org-id.png)
+
+## Prepare DCI Pipeline Container E2E Certification Setting
+This `DCI Pipeline` Setting will include `create container certification project`, update mandatory parameters, scan container+submit the results and attach the product-listing to newly created project. 
+
+**dci-pipeline-settings-container-e2e-certification.yaml:**
+```yaml
+---
+- name: Certification-Container-E2E
+  stage: certifycontainer
+  ansible_playbook: /usr/share/dci-openshift-app-agent/dci-openshift-app-agent.yml
+  ansible_cfg: /usr/share/dci-openshift-app-agent/ansible.cfg
+  ansible_inventory: /etc/dci-openshift-app-agent/hosts.yml
+  dci_credentials: /etc/dci-pipeline/dci_credentials.yml
+  ansible_extravars:
+    dci_name: create,update,attach,scan container certification project using DCI Pipeline
+    dci_configuration: Using DCI Pipeline to create container certification project  
+    dci_tags: ["debug", "certification-container"]
+    dci_cache_dir: /var/lib/dci-pipeline
+    dci_config_dirs: [/etc/dci-openshift-agent]
+    dci_workarounds: []
+    partner_creds: "/var/lib/dci-openshift-app-agent/demo-auth.json"
+    check_for_existing_projects: true
+    organization_id: 1111111
+    do_must_gather: false
+    preflight_run_health_check: false
+    check_workload_api: false
+    page_size: 400 #lab has a lot of archive projects so it needs to define page_size higher than partner account
+    #preflight_container_wait: 0 # value in minute if waiting for backend to publish your images to catalog due to the delay.
+    pyxis_apikey_path: "/var/lib/dci-openshift-app-agent/demo-pyxis-apikey.txt"
+    preflight_containers_to_certify:
+      - container_image: "quay.io/avu0/auto-publish-ubi8-nginx-demo7:v120"
+        create_container_project: true
+        short_description: "I am doing a full-automation e2e auto-publish for following image auto-publish-ubi8-nginx-demo7"
+    
+    cert_settings:
+       auto_publish: false
+       build_categories: "Standalone image"
+       registry_override_instruct: "<p>This is an instruction how to get the image link.</p>"
+       email_address: "me@redhat.com"
+       application_categories: "Networking"
+       os_content_type: "Red Hat Universal Base Image (UBI)"
+       privileged: false
+       release_category: "Generally Available"
+       repository_description: "This is a test for Demo how to automate to create project,SCAN and update settings"
+    
+    cert_listings:
+      published: false
+      type: "container stack"
+      pyxis_product_list_identifier: "222222222222222222222222"
+      attach_product_listing: true
+
+  components: []
+  inputs:
+    kubeconfig: /var/lib/dci-openshift-app-agent/kubeconfig
+```
+## Prepare DCI Pipeline Container E2E Certification Setting
+This `DCI Pipeline` Setting will include `create helmchart certification project`, update mandatory parameters, and attach the product-listing to newly created project. 
+
+**dci-pipeline-settings-helmchart-e2e-cert-chartverifier-pr.yaml:**
+```yaml
+---
+- name: Certification-Helmchart-PR
+  stage: helmchartcreation
+  prev_stages: certifycontainer
+  ansible_playbook: /usr/share/dci-openshift-app-agent/dci-openshift-app-agent.yml
+  ansible_cfg: /usr/share/dci-openshift-app-agent/ansible.cfg
+  ansible_inventory: /etc/dci-openshift-app-agent/hosts.yml
+  dci_credentials: /etc/dci-pipeline/dci_credentials.yml
+  topic: OCP-4.13
+  ansible_extravars:
+    dci_name: create,update,attach,helmchart certification project using DCI Pipeline
+    dci_configuration: Using DCI Pipeline to create helmchart certification project and PR  
+    dci_tags: ["debug", "certification-helmcart"]
+    dci_cache_dir: /var/lib/dci-pipeline
+    dci_config_dirs: [/etc/dci-openshift-agent]
+    dci_workarounds: []
+    partner_creds: "/var/lib/dci-openshift-app-agent/demo-auth.json"
+    check_for_existing_projects: true
+    organization_id: 15451045
+    do_must_gather: false
+    preflight_run_health_check: false
+    check_workload_api: false
+    page_size: 400
+    pyxis_apikey_path: "/var/lib/dci-openshift-app-agent/demo-pyxis-apikey.txt"
+      helmchart_to_certify:
+      - repository: "https://github.com/ansvu/testctestchart1hart14"
+        short_description: "This is a short description testchart1"
+        chart_name: "testchart1"
+        create_helmchart_project: true
+
+      cert_settings:
+        email_address: "avu@redhat.com"
+        distribution_method: "undistributed"
+        github_usernames: "ansvu"
+        application_categories: "Networking"
+        long_description: "This is a long description about this sample chart"
+        distribution_instructions: "You must be present to get this helm-chart!"
+
+      cert_listings:
+        attach_product_listing: true
+        published: false
+        type: "container stack"
+        pyxis_product_list_identifier: "639b4bfd27b76af009e324cb"
+
+  components: []
+  inputs:
+    kubeconfig: "/var/lib/dci-openshift-app-agent/kubeconfig"
+...
+
+- name: Certification-Helmchart-PR
+  stage: helmchartpr
+  prev_stages: helmchartcreation
+  ansible_playbook: /usr/share/dci-openshift-app-agent/dci-openshift-app-agent.yml
+  ansible_cfg: /usr/share/dci-openshift-app-agent/ansible.cfg
+  ansible_inventory: /etc/dci-openshift-app-agent/hosts.yml
+  dci_credentials: /etc/dci-pipeline/dci_credentials.yml
+  topic: OCP-4.13
+  ansible_extravars:
+    dci_name: test helmchart PR on github using DCI Pipeline
+    dci_configuration: Testing helmpchart PR with pipeline 
+    dci_tags: ["debug", "certification-helmchart-pr"]
+    dci_cache_dir: /var/lib/dci-pipeline
+    dci_config_dirs: [/etc/dci-openshift-agent]
+    dci_workarounds: []
+    do_must_gather: false
+    check_workload_api: false
+    do_chart_verifier: true
+    partner_name: "redhat-arkady-test"
+    partner_email: "redhat-arkady-test@redhat.com"
+    github_token_path: "/var/lib/dci-openshift-app-agent/github-token.txt"
+    dci_charts:
+      - name: testchart1
+        chart_file: https://ansvu.github.io/testchart1/testchart1-0.1.3.tgz
+        deploy_chart: true
+        create_pr: true
+
+  components: []
+  inputs:
+    kubeconfig: /var/lib/dci-openshift-app-agent/kubeconfig
+...
+```
+## How To Run One Shot CNF Certification Automation
+```shellSession
+$ dci-pipeline dci-pipeline-settings-helmchart-e2e-cert-chartverifier-pr.yaml dci-pipeline-settings-helmchart-e2e-cert-chartverifier-pr.yaml
+```
