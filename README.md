@@ -221,7 +221,7 @@ This `DCI Pipeline` Setting will include `create helmchart certification project
     dci_workarounds: []
     partner_creds: "/var/lib/dci-openshift-app-agent/demo-auth.json"
     check_for_existing_projects: true
-    organization_id: 15451045
+    organization_id: 11111111
     do_must_gather: false
     check_workload_api: false
     page_size: 400
