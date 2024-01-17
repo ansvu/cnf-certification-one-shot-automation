@@ -223,7 +223,6 @@ This `DCI Pipeline` Setting will include `create helmchart certification project
     check_for_existing_projects: true
     organization_id: 15451045
     do_must_gather: false
-    preflight_run_health_check: false
     check_workload_api: false
     page_size: 400
     pyxis_apikey_path: "/var/lib/dci-openshift-app-agent/demo-pyxis-apikey.txt"
