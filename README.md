@@ -198,7 +198,7 @@ This `DCI Pipeline` Setting will include `create container certification project
   inputs:
     kubeconfig: /var/lib/dci-openshift-app-agent/kubeconfig
 ```
-## Prepare DCI Pipeline Container E2E Certification Setting
+## Prepare DCI Pipeline Helmchart E2E Certification Settings
 This `DCI Pipeline` Setting will include `create helmchart certification project`, update mandatory parameters, and attach the product-listing to newly created project. 
 
 **dci-pipeline-settings-helmchart-e2e-cert-chartverifier-pr.yaml:**
@@ -227,9 +227,9 @@ This `DCI Pipeline` Setting will include `create helmchart certification project
     page_size: 400
     pyxis_apikey_path: "/var/lib/dci-openshift-app-agent/demo-pyxis-apikey.txt"
       helmchart_to_certify:
-      - repository: "https://github.com/ansvu/testctestchart1hart14"
-        short_description: "This is a short description testchart1"
-        chart_name: "testchart1"
+      - repository: "https://github.com/ansvu/finalchart"
+        short_description: "This is a short description finalchart"
+        chart_name: "finalchart"
         create_helmchart_project: true
 
       cert_settings:
@@ -237,20 +237,20 @@ This `DCI Pipeline` Setting will include `create helmchart certification project
         distribution_method: "undistributed"
         github_usernames: "ansvu"
         application_categories: "Networking"
-        long_description: "This is a long description about this sample chart"
+        long_description: "This is a long description about this final chart"
         distribution_instructions: "You must be present to get this helm-chart!"
 
       cert_listings:
         attach_product_listing: true
         published: false
         type: "container stack"
-        pyxis_product_list_identifier: "639b4bfd27b76af009e324cb"
+        pyxis_product_list_identifier: "2222222222222222222222222"
 
   components: []
   inputs:
     kubeconfig: "/var/lib/dci-openshift-app-agent/kubeconfig"
 ...
-
+# Next stage is to create helmchart certification project e2e, then generate report.yaml + PR
 - name: Certification-Helmchart-PR
   stage: helmchartpr
   prev_stages: helmchartcreation
@@ -273,8 +273,8 @@ This `DCI Pipeline` Setting will include `create helmchart certification project
     partner_email: "redhat-arkady-test@redhat.com"
     github_token_path: "/var/lib/dci-openshift-app-agent/github-token.txt"
     dci_charts:
-      - name: testchart1
-        chart_file: https://ansvu.github.io/testchart1/testchart1-0.1.3.tgz
+      - name: finalchart
+        chart_file: https://ansvu.github.io/finalchart/finalchart-0.1.4.tgz
         deploy_chart: true
         create_pr: true
 
@@ -283,7 +283,52 @@ This `DCI Pipeline` Setting will include `create helmchart certification project
     kubeconfig: /var/lib/dci-openshift-app-agent/kubeconfig
 ...
 ```
+
+## Prepare DCI Pipeline Openshift-cnf E2E Certification Setting
+This `DCI Pipeline` Setting will include `create Openshift-cnf certification project` and attach the product-listing to newly created project. Once this `vendor validated` project is created, then the support-case also created automatically. To finalize the `Vendor-valiated` certification, it needs the Backend or someone who access to saleforce BE to approve it.  
+
+**dci-pipeline-settings-openshift-cnf-e2e-cert.yaml:**
+```yaml
+---
+- name: Openshift-CNF-Project-Creation Using Pipeline
+  stage: openshiftcnf
+  prev_stages: helmchartpr
+  ansible_playbook: /usr/share/dci-openshift-app-agent/dci-openshift-app-agent.yml
+  ansible_cfg: /usr/share/dci-openshift-app-agent/ansible.cfg
+  ansible_inventory: /etc/dci-openshift-app-agent/hosts.yml
+  dci_credentials: /etc/dci-pipeline/dci_credentials.yml
+  topic: OCP-4.13
+  ansible_extravars:
+    dci_name: create openshift-cnf project using DCI Pipeline
+    dci_configuration: Using DCI Pipeline to create openshift-cnf project  
+    dci_tags: ["debug", "openshift-cnf"]
+    dci_cache_dir: /var/lib/dci-pipeline
+    dci_config_dirs: [/etc/dci-openshift-agent]
+    dci_workarounds: []
+    partner_creds: "/var/lib/dci-openshift-app-agent/demo-auth.json"
+    check_for_existing_projects: true
+    organization_id: 11111111
+    do_must_gather: false
+    check_workload_api: false
+    page_size: 400
+    pyxis_apikey_path: "/var/lib/dci-openshift-app-agent/demo-pyxis-apikey.txt"
+    cnf_to_certify:
+      - cnf_name: "DemoCNF23.8 on OCP4.14"
+        create_cnf_project: true
+
+    cert_listings:
+      email_address: "me@redhat.com"
+      published: true
+      type: "container stack"
+      pyxis_product_list_identifier: "22222222222222222222222"
+      attach_product_listing: true
+
+  components: []
+  inputs:
+    kubeconfig: /var/lib/dci-openshift-app-agent/kubeconfig
+```
+
 ## How To Run One Shot CNF Certification Automation
 ```shellSession
-$ dci-pipeline dci-pipeline-settings-helmchart-e2e-cert-chartverifier-pr.yaml dci-pipeline-settings-helmchart-e2e-cert-chartverifier-pr.yaml
+$ dci-pipeline dci-pipeline-settings-helmchart-e2e-cert-chartverifier-pr.yaml dci-pipeline-settings-helmchart-e2e-cert-chartverifier-pr.yaml dci-pipeline-settings-openshift-cnf-e2e-cert.yaml
 ```
