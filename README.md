@@ -259,7 +259,7 @@ This `DCI Pipeline` Setting will include `create container certification project
 ## Prepare DCI Pipeline Oneshot Helmchart
 This `DCI Pipeline` Setting will include `create helmchart certification project`, update mandatory parameters, and attach the product-listing to newly created project. 
 
-**dci-pipeline-settings-helmchart-e2e-cert-chartverifier-pr.yaml:**
+**pipelines/oneshot-helmchart-pipeline.yml:**
 ```yaml
 ---
 - name: oneshot-helmchart
@@ -334,45 +334,47 @@ This `DCI Pipeline` Setting will include `create helmchart certification project
 ## Prepare DCI Pipeline Openshift-cnf E2E Certification Setting
 This `DCI Pipeline` Setting will include `create Openshift-cnf certification project` and attach the product-listing to newly created project. Once this `vendor validated` project is created, then the support-case also created automatically. To finalize the `Vendor-valiated` certification, it needs the Backend or someone who access to saleforce BE to approve it.  
 
-**dci-pipeline-settings-openshift-cnf-e2e-cert.yaml:**
+**pipelines/create-openshift-cnf-pipeline.yml:**
 ```yaml
 ---
-- name: Openshift-CNF-Project-Creation Using Pipeline
-  stage: openshiftcnf
-  prev_stages: helmchartpr
+- name: create-openshift-cnf
+  stage: workload
+  topic: OCP-4.14
   ansible_playbook: /usr/share/dci-openshift-app-agent/dci-openshift-app-agent.yml
-  ansible_cfg: /usr/share/dci-openshift-app-agent/ansible.cfg
-  ansible_inventory: /etc/dci-openshift-app-agent/hosts.yml
-  dci_credentials: /etc/dci-pipeline/dci_credentials.yml
-  topic: OCP-4.13
+  ansible_cfg: ~/avu-dci-pipeline-test/pipelines/ansible.cfg
+  ansible_inventory: ~/avu-dci-pipeline-test/inventories/@QUEUE/@RESOURCE-workload.yml
+  dci_credentials: ~/.config/dci-pipeline/dci_credentials.yml
   ansible_extravars:
-    dci_name: create openshift-cnf project using DCI Pipeline
-    dci_configuration: Using DCI Pipeline to create openshift-cnf project  
-    dci_tags: ["debug", "openshift-cnf"]
-    dci_cache_dir: /var/lib/dci-pipeline
-    dci_config_dirs: [/etc/dci-openshift-agent]
+    dci_cache_dir: ~/dci-cache-dir
+    dci_config_dir: ~/avu-dci-pipeline-test/ocp-workload
+    dci_gits_to_components:
+      - ~/avu-dci-pipeline-test
+    dci_local_log_dir: ~/upload-errors
+    dci_tags: ["openshift-cnf", "cnf", "debug", "create"]  
     dci_workarounds: []
-    partner_creds: "/var/lib/dci-openshift-app-agent/demo-auth.json"
+  
+    #custom settings
     check_for_existing_projects: true
-    organization_id: 11111111
+    organization_id: 15451045
+    page_size: 200
+
     do_must_gather: false
     check_workload_api: false
-    page_size: 400
     pyxis_apikey_path: "/var/lib/dci-openshift-app-agent/demo-pyxis-apikey.txt"
+
     cnf_to_certify:
-      - cnf_name: "DemoCNF23.8 on OCP4.14"
+      - cnf_name: "YingOneShot0.1.5 on OCP4.14"
         create_cnf_project: true
+        pyxis_product_lists:
+          - "6397a9d2aea4e1694b0fe1c4"
 
-    cert_listings:
-      email_address: "me@redhat.com"
-      published: true
-      type: "container stack"
-      pyxis_product_list_identifier: "22222222222222222222222"
-      attach_product_listing: true
+    cert_settings:
+      email_address: "email@example.com"          
 
-  components: []
+  use_previous_topic: true
   inputs:
-    kubeconfig: /var/lib/dci-openshift-app-agent/kubeconfig
+    kubeconfig: kubeconfig_path
+...
 ```
 
 ## How To Run One Shot CNF Certification Automation
@@ -381,3 +383,16 @@ $ export KUBECONFIG=/var/lib/dci-openshift-app-agent/kubeconfig
 $ oc project oneshot
 $ KUBECONFIG=$KUBECONFIG dci-pipeline-schedule oneshot-container oneshot-helmchart
 ```
+
+## Oneshot Automation Successful Post Status
+- Container published on catalog  
+![Container Published Status on Catalog](img/oneshot-automation-container-published-cat.png)
+
+- DCI Pipeline Stages Status 
+![DCI Pipeline Stages Status](img/oneshot-automation-dci-ci.png)
+
+- Chart Released from Charts Repository 
+![Chart Released from Charts Repository](img/oneshot-automation-chart-released-pr.png)
+
+- Container and helm chart published from portal 
+![Container and helm chart published from portal](img/oneshot-automation-published-portal.png)
