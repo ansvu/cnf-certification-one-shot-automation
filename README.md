@@ -1,4 +1,7 @@
-# cnf-certification-one-shot-automation
+# CNF Oneshot Automation Flow
+![Oneshot Automaiton Sequence](img/oneshot-automation-seq.png)
+
+## cnf-certification-one-shot-automation
 This repo purpose is to automate the partners CNF certification that have been done the sanity checking for following steps:
 - Using Preflight script or manual to perform sanity checking and all these test cases that preflight is testing and `it Must be passed!` and `its verdict passed` also.  
 **Main Test Case must pass as follow:**
@@ -250,7 +253,7 @@ This `DCI Pipeline` Setting will include `create helmchart certification project
   inputs:
     kubeconfig: "/var/lib/dci-openshift-app-agent/kubeconfig"
 ...
-# Next stage is to create helmchart certification project e2e, then generate report.yaml + PR
+
 - name: Certification-Helmchart-PR
   stage: helmchartpr
   prev_stages: helmchartcreation
