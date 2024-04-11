@@ -9,14 +9,14 @@ This repo purpose is to automate the partners CNF certification that have been d
 ======================================================
 Image Name           Test Case                 Status    
 ------------------------------------------------------
-universal-smf-ava   HasLicense                PASSED    
-universal-smf-ava   HasUniqueTag              PASSED    
-universal-smf-ava   LayerCountAcceptable      PASSED    
-universal-smf-ava   HasNoProhibitedPackages   PASSED    
-universal-smf-ava   HasRequiredLabel          PASSED    
-universal-smf-ava   RunAsNonRoot              PASSED    
-universal-smf-ava   HasModifiedFiles          PASSED    
-universal-smf-ava   BasedOnUbi                PASSED    
+oneshot-demo2-nginx-ubi9   HasLicense                PASSED    
+oneshot-demo2-nginx-ubi9   HasUniqueTag              PASSED    
+oneshot-demo2-nginx-ubi9   LayerCountAcceptable      PASSED    
+oneshot-demo2-nginx-ubi9   HasNoProhibitedPackages   PASSED    
+oneshot-demo2-nginx-ubi9   HasRequiredLabel          PASSED    
+oneshot-demo2-nginx-ubi9   RunAsNonRoot              PASSED    
+oneshot-demo2-nginx-ubi9   HasModifiedFiles          PASSED    
+oneshot-demo2-nginx-ubi9   BasedOnUbi                PASSED    
 Verdict: PASSED
 ```
 For details of sanity check script using preflight scan, it can be found [here](https://github.com/ansvu/quick_scan_container_images_online_offline)
@@ -396,3 +396,9 @@ $ KUBECONFIG=$KUBECONFIG dci-pipeline-schedule oneshot-container oneshot-helmcha
 
 - Container and helm chart published from portal 
 ![Container and helm chart published from portal](img/oneshot-automation-published-portal.png)
+
+- DCI CI Container Jobs
+click [Container CI Job](https://www.distributed-ci.io/jobs/8d8fa931-e892-4f38-be73-1fad94ecb6ee)
+
+- DCI CI Helmchart Jobs
+click [Helmchart CI Job](https://www.distributed-ci.io/jobs/58b6d4a3-db60-4ad3-962e-d7b22eb5321c)
