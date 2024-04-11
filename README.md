@@ -147,6 +147,54 @@ Follow this link to [Create-Product-Listing](https://connect.redhat.com/manage/p
 Mandatory when using create_container_project. Company ID will be used for the verification of container certification project Organization-ID Company-Profile.
 ![Get Redhat OrgID](img/redhat-org-id.png)
 
+## Setup DCI-Pipeline Repository with Hooks
+```shellSession
+$ ls -1
+deprecated_ctl_settings
+hooks
+inventories
+ocp-workload
+pipelines
+README.md
+
+$ tree .
+.
+├── deprecated_ctl_settings
+│   ├── settings-cmm23.8-tnfv4.5.5.yml
+│   └── settings-recertify-cmm23.8-new.yml
+├── hooks
+│   └── install.yml
+├── inventories
+│   └── pool
+│       ├── cluster1
+│       └── cluster1-workload.yml
+├── ocp-workload
+│   └── hooks
+│       ├── install.yml
+│       ├── post-run.yml
+│       ├── pre-run.yml
+│       ├── teardown.yml
+│       ├── tests.yml
+│       ├── wait_for_container_published-oldway-OK.yml
+│       ├── wait_for_container_published.yml
+│       └── wait_for_one_container.yml
+├── pipelines
+│   ├── ansible.cfg
+│   ├── ansible.log
+│   ├── certify-oneshot-automation-pipeline.yml
+│   ├── container-e2e-pipeline.yml
+│   ├── container-hooks-pipeline.yml
+│   ├── create-helmchart-pipeline.yml
+│   ├── create-openshift-cnf-pipeline.yml
+│   ├── helmchart-verifier-report-pipeline.yml
+│   ├── oneshot-container-pipeline.yml
+│   ├── oneshot-helmchart-pipeline.yml
+│   ├── test-container-hooks-pipeline.yml
+│   ├── test-helmchart-nopr-pipeline.yml
+│   └── test-hooks-query-pipeline.yml
+└── README.md
+```
+
 ## Prepare DCI Pipeline Oneshot Container
 This `DCI Pipeline` Setting will include `create container certification project`, update mandatory parameters, scan container+submit the results and attach the product-listing to newly created project. 
 
@@ -329,5 +377,7 @@ This `DCI Pipeline` Setting will include `create Openshift-cnf certification pro
 
 ## How To Run One Shot CNF Certification Automation
 ```shellSession
-$ dci-pipeline dci-pipeline-settings-helmchart-e2e-cert-chartverifier-pr.yaml dci-pipeline-settings-helmchart-e2e-cert-chartverifier-pr.yaml dci-pipeline-settings-openshift-cnf-e2e-cert.yaml
+$ export KUBECONFIG=/var/lib/dci-openshift-app-agent/kubeconfig
+$ oc project oneshot
+$ KUBECONFIG=$KUBECONFIG dci-pipeline-schedule oneshot-container oneshot-helmchart
 ```
