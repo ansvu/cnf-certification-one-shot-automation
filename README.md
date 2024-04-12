@@ -72,7 +72,9 @@ Note that when using dci-pipeline to perform the container images sanity checkin
 
 </details>
 
-- Using chart-verifier either use dci to run or manually to generate report.yaml
+- Two ways to generate helmchart report.yaml 
+  - Use DCI-pipeline to run/do-chart-verifier 
+  - Run chart-verifier standard alone 
 <details>
 <summary>Chart Verifier Test Checking</summary>
 
