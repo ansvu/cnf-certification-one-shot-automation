@@ -1,3 +1,7 @@
+
+# DCI Tests Flow Chart Diagram
+![DCI-Tests-Flow](img/dci-tests-flow.png)
+
 # CNF Oneshot Automation Flow
 ![Oneshot Automaiton Sequence](img/oneshot-automation-seq.png)
 
