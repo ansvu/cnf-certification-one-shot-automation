@@ -5,8 +5,8 @@
 
 
 ## cnf-certification-one-shot-automation
-This repo purpose is to automate the partners CNF certification that have been done the sanity checking for following steps:
-- Using Preflight script or manual to perform sanity checking and all these test cases that preflight is testing and `it Must be passed!` and `its verdict passed` also.  
+This repo purpose is to automate the partners CNF certification that have been done the sanity checking for following steps:  
+- Using Preflight script or manual to perform sanity checking and all these test cases that preflight `must be passed!`
 **Main Test Case must pass as follow:**
 ```shellSession
 ======================================================
@@ -23,6 +23,16 @@ oneshot-demo2-nginx-ubi9   BasedOnUbi                PASSED
 Verdict: PASSED
 ```
 For details of sanity check script using preflight scan, it can be found [here](https://github.com/ansvu/quick_scan_container_images_online_offline)
+
+- Second method to do pre-testing the container images  
+To use dci-pipeline with including all the container images without specify or set to true `create_container_project: true`  
+```yaml
+    preflight_containers_to_certify:
+      - container_image: "quay.io/avu0/oneshot-demo1-nginx-ubi9:1-22"
+      - container_image: "quay.io/avu0/oneshot-demo2-nginx-ubi9:1-22"
+      - container_image: "quay.io/avu0/oneshot-demo3-nginx-ubi9:1-22"
+```
+Note that when using dci-pipeline to perform the container images sanity checking, it does not enable loglevel to debug by default compare with `quick_scan_container_images_online_offline.sh` since it includes it prints out hasModifiedFile test case failure and convert to excelsheet also. 
 
 <details>
 <summary>Preflight All Test Cases</summary>
