@@ -182,6 +182,19 @@ DEFAULT_QUEUE=pool
 EOF
 ```
 
+Add the credentials for your remoteci in `~/.config/dci-pipeline/dci_credentials.yml`.
+
+You can now customize the hooks, pipelines and inventories files to meet your needs, following [the DCI documentation](https://docs.distributed-ci.io/).
+
+The custom partner hooks for the `workload` pipeline are in `ocp-workload/hooks` folder.
+
+The inventories are set `dci-queue` to be used with the following settings:
+
+```ShellSession
+$ dci-queue add-pool pool
+$ dci-queue add-resource pool cluster1
+```
+
 ```shellSession
 $ ls -1
 deprecated_ctl_settings
