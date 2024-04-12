@@ -161,6 +161,21 @@ Mandatory when using create_container_project. Company ID will be used for the v
 ![Get Redhat OrgID](img/redhat-org-id.png)
 
 ## Setup DCI-Pipeline Repository with Hooks
+
+Install the `dci-pipeline` and `dci-openshift-app-agent` rpm on your jumpbox.
+
+Then, create the required directories and files for DCI to work:
+
+```ShellSession
+$ cd ~
+$ git clone git@github.com:ansvu/avu-dci-pipeline-test.git
+$ mkdir -p dci-cache-dir upload-errors .config/dci-pipeline
+$ cat > .config/dci-pipeline/config <<EOF
+PIPELINES_DIR=$HOME/avu-dci-pipeline-test/pipelines
+DEFAULT_QUEUE=pool
+EOF
+```
+
 ```shellSession
 $ ls -1
 deprecated_ctl_settings
